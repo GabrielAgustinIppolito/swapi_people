@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import SearchBar from './components/SearchBar';
+import searchPeople from './api';
+import PeopleList from './components/PeopleList';
 
 function App() {
+  const [people, setPeople] = useState([]);
+  const [nextP, setNextP] = useState("1");
+  // console.log(nextP);
+  const handleSubmit = async (term, nextP) => {
+    const data = await searchPeople(term, nextP);
+    setPeople(data.results);
+    if(data.next != null){
+      setNextP(nextP + 1);
+    }
+    console.log(nextP);
+  };
+
+  const nextPage = ()=>{
+    handleSubmit();
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={nextPage}>Next</button>
+      <SearchBar onSubmit={handleSubmit} />
+      <PeopleList people={people} />
     </div>
   );
 }
